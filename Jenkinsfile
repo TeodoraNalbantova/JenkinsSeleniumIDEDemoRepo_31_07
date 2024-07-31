@@ -11,7 +11,6 @@ pipeline {
     stages {
         stage('Checkout code') {
             steps {
-                // Checkout code from GitHub and specify the branch
                 git branch: 'main', url: 'https://github.com/TeodoraNalbantova/JenkinsSeleniumIDEDemoRepo_31_07'
             }
         }
@@ -25,25 +24,20 @@ pipeline {
             }
         }
 
-        
-
         stage('Restore dependencies') {
             steps {
-                // Restore dependencies using the solution file
                 bat 'dotnet restore SeleniumIde.sln'
             }
         }
 
         stage('Build') {
             steps {
-                // Build the project using the solution file
                 bat 'dotnet build SeleniumIde.sln --configuration Release'
             }
         }
 
         stage('Run tests') {
             steps {
-                // Run tests using the solution file
                 bat 'dotnet test SeleniumIde.sln --logger "trx;LogFileName=TestResults.trx"'
             }
         }
@@ -52,7 +46,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: '**/TestResults/*.trx', allowEmptyArchive: true
-            junit '**/TestResults/*.trx'
+            mstest testResultsFile: '**/TestResults/*.trx'
         }
     }
 }
